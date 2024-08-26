@@ -3,6 +3,7 @@ from langchain_mongodb import MongoDBAtlasVectorSearch
 
 from ..defaults import (
     MODEL_DIR,
+    RETRIEVER_K_PARAM,
     VECTORSTORE_COLLECTION_NAME,
     VECTORSTORE_EMBEDDING_KEY,
     VECTORSTORE_INDEX_NAME,
@@ -25,4 +26,4 @@ vector_store = MongoDBAtlasVectorSearch(
 
 
 def get_retriever():
-    return vector_store.as_retriever(k=3)
+    return vector_store.as_retriever(k=RETRIEVER_K_PARAM)
