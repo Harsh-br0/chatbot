@@ -17,11 +17,11 @@
 - Head over to `http://localhost:8080/docs`
 
 ### Models Used
-- sentence-transformers/all-mpnet-base-v2
+- `sentence-transformers/all-mpnet-base-v2`
 
     It is used for embedding vectors and this will run locally. Initally it will download the model into `models` directory.
 
-- TinyLlama/TinyLlama-1.1B-Chat-v1.0 
+- `TinyLlama/TinyLlama-1.1B-Chat-v1.0`
 
     It is the main LLM and being used through the HuggingFace Hub Inference API.
 

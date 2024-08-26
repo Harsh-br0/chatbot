@@ -2,10 +2,19 @@ import os
 
 from pymongo import MongoClient
 from pymongo.collection import Collection
+from pymongo.errors import ConnectionFailure
 
 from ..defaults import DB_NAME
 
-client = MongoClient(os.environ["MONGO_URL"])
+
+def create_client():
+    try:
+        return MongoClient(os.environ["MONGO_URL"])
+    except ConnectionFailure:
+        exit("Connection Failed to Mongodb.")
+
+
+client = create_client()
 db = client[DB_NAME]
 
 

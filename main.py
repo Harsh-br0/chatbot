@@ -53,8 +53,8 @@ def post_process_files(paths: list[str], mimes: list[Optional[str]]):
     for path, mime in zip(paths, mimes):
         try:
             add_document(path, mime)
-        except Exception as e:
-            log.exception(e)
+        except Exception:
+            log.exception("Error while post processing files..")
         finally:
             os.remove(path)
 
@@ -85,8 +85,16 @@ app.include_router(router, prefix="/api")
 
 
 @app.exception_handler(ChatBotException)
-async def unicorn_exception_handler(request: Request, exc: ChatBotException):
+async def chatbot_exception_handler(request: Request, exc: ChatBotException):
     raise HTTPException(status.HTTP_406_NOT_ACCEPTABLE, str(exc))
+
+
+@app.exception_handler(Exception)
+async def base_exception_handler(request: Request, exc: Exception):
+    log.exception("FastAPI base exception handler..")
+    raise HTTPException(
+        status.HTTP_500_INTERNAL_SERVER_ERROR, "Server Faced some issue, kindly check logs..."
+    )
 
 
 if __name__ == "__main__":
