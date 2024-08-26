@@ -1,3 +1,5 @@
+from typing import Optional
+
 from ..exceptions import LoaderNotSupported
 from ..utils import chunk_iter
 from .csv import CSVLoader
@@ -17,7 +19,7 @@ class DocumentLoader:
         self._loader = loader
 
     @classmethod
-    def by_type(cls, mime_type: str):
+    def by_type(cls, mime_type: Optional[str]):
         if mime_type is None or mime_type not in LOADERS:
             raise LoaderNotSupported(f"Files with mime type {mime_type} are not supported...")
 

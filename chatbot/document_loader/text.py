@@ -8,7 +8,7 @@ class TextLoader:
         self.splitter = get_splitter()
 
     def load(self, path: str):
-        with open(path) as f:
+        with open(path, encoding="utf8") as f:
             src_file = os.path.basename(path)
             count = 0
             while data := f.read(self.splitter._chunk_size * 2):

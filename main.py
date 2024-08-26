@@ -13,10 +13,12 @@ from fastapi import (
 
 from chatbot.defaults import TEMP_DIR
 from chatbot.document_loader import DocumentLoader
-from chatbot.exceptions import ChatBotException
+from chatbot.exceptions import ChatBotException, LoaderNotSupported
 from chatbot.functions import add_document, ask_question
+from chatbot.logging import logger
 
 router = APIRouter()
+log = logger(__name__)
 
 
 def process_file(file: UploadFile):
@@ -30,18 +32,41 @@ def process_file(file: UploadFile):
     return new_path
 
 
-def post_process_file(path: str, mime: Optional[str]):
-    add_document(path, mime)
-    os.remove(path)
+def process_files(files: list[UploadFile]):
+    paths, mimes = [], []
+    errs_with_exts = set()
+    for file in files:
+        try:
+            DocumentLoader.by_type(file.content_type)
+            paths.append(process_file(file))
+            mimes.append(file.content_type)
+        except Exception as e:
+            log.exception(e)
+
+            if isinstance(e, LoaderNotSupported):
+                errs_with_exts.add(os.path.basename(file.filename or ".unknown"))
+
+    return paths, mimes, errs_with_exts
+
+
+def post_process_files(paths: list[str], mimes: list[Optional[str]]):
+    for path, mime in zip(paths, mimes):
+        try:
+            add_document(path, mime)
+        except Exception as e:
+            log.exception(e)
+        finally:
+            os.remove(path)
 
 
 @router.post("/addDocument")
-def add_doc_route(file: UploadFile, tasks: BackgroundTasks):
-    # document check
-    DocumentLoader.by_type(file.content_type)  # type: ignore
-    path = process_file(file)
-    tasks.add_task(post_process_file, path, file.content_type)
-    return {"msg": "Document is being processed..."}
+def add_doc_route(files: list[UploadFile], tasks: BackgroundTasks):
+    paths, mimes, errs = process_files(files)
+    tasks.add_task(post_process_files, paths, mimes)
+    res = {"msg": "Documents are being processed..."}
+    if errs:
+        res["error"] = "Following extensions are not supported: " + ", ".join(errs)
+    return res
 
 
 @router.get("/ask")
