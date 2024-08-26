@@ -1,0 +1,12 @@
+.vscode/
+__pycache__/
+venv/
+
+assets/
+
+docs/
+models/
+temp/
+
+config.env
+err.log
