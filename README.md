@@ -19,11 +19,11 @@
 ### Models Used
 - `sentence-transformers/all-mpnet-base-v2`
 
-    It is used for embedding vectors and this will run locally. Initally it will download the model into `models` directory.
+    It is used for embedding vectors and this will run locally. Initially it will download the model into `models` directory.
 
 - `TinyLlama/TinyLlama-1.1B-Chat-v1.0`
 
-    It is the main LLM and being used through the HuggingFace Hub Inference API.
+    It is the main LLM that being used through the HuggingFace Hub Inference API.
 
 
-> Note: Since it is using Inference API and a model locally, the setup would be too slow 😓. On my side, it took more than 2 mins exactly to add a document of 45+ pages to vector store and almost 1 min to process the messages with LLM.
+> Note: Since it is using Inference API and a model locally, the setup would be too slow. On my side, it took more than 2 mins exactly to add a document of 45+ pages to vector store and almost 1 min to process the messages with LLM.
